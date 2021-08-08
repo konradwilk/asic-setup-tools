@@ -10,7 +10,7 @@ TAG := mpw-two-c
 URL_FPGA := https://github.com/YosysHQ/fpga-toolchain/releases/download/nightly-20210623/fpga-toolchain-linux_x86_64-nightly-20210623.tar.xz
 URL_RISC := https://static.dev.sifive.com/dev-tools/riscv64-unknown-elf-gcc-8.3.0-2020.04.1-x86_64-linux-ubuntu14.tar.gz
 
-all: start magic bashrc openlane cocotb fpga risc checker
+all: start magic bashrc openlane-install caravel-install cocotb fpga risc checker
 
 .PHONY: start
 start:
@@ -37,17 +37,21 @@ bashrc:
 	echo "export CARAVEL_ROOT=$(CARAVEL_ROOT)" >> $(HOME)/.bashrc
 	echo "export PDK_PATH=$(PDK_PATH)" >> $(HOME)/.bashrc
 
-.PHONY: openlane
-openlane: bashrc
+.PHONY: openlane-install
+openlane-install:
 	if ! [ -e "$(OPENLANE)" ]; then git clone https://github.com/efabless/openlane.git $(OPENLANE); fi
+
+openlane: openlane-install
 	newgrp docker
 	$(MAKE) -C $(OPENLANE) openlane
 	$(MAKE) -C $(OPENLANE) pdk
 	$(MAKE) -C $(OPENLANE) tests
 
-.PHONY: caravel
-caravel:
+.PHONY: caravel-install
+caravel-install:
 	if ! [ -e "$(CARAVEL)" ]; then git clone https://github.com/efabless/caravel_user_project.git $(CARAVEL); (cd $(CARAVEL);git checkout $(TAG)); fi
+
+caravel: caravel-install
 	$(MAKE) -C $(CARAVEL) install
 	$(MAKE) -C $(CARAVEL) pdk
 	$(MAKE) -C $(CARAVEL) tests
