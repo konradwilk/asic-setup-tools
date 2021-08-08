@@ -10,7 +10,7 @@ TAG := mpw-two-c
 URL_FPGA := https://github.com/YosysHQ/fpga-toolchain/releases/download/nightly-20210623/fpga-toolchain-linux_x86_64-nightly-20210623.tar.xz
 URL_RISC := https://static.dev.sifive.com/dev-tools/riscv64-unknown-elf-gcc-8.3.0-2020.04.1-x86_64-linux-ubuntu14.tar.gz
 
-all: start magic openlane
+all: start magic bashrc openlane cocotb fpga risc checker
 
 .PHONY: start
 start:
