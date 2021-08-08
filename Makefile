@@ -8,12 +8,13 @@ PDK_PATH := $(PDK_ROOT)/sky130A
 CHECKER := $(HOME)/open_mpw_precheck
 TAG := mpw-two-c
 URL_FPGA := https://github.com/YosysHQ/fpga-toolchain/releases/download/nightly-20210623/fpga-toolchain-linux_x86_64-nightly-20210623.tar.xz
+URL_RISC := https://static.dev.sifive.com/dev-tools/riscv64-unknown-elf-gcc-8.3.0-2020.04.1-x86_64-linux-ubuntu14.tar.gz
 
 all: start magic openlane
 
 .PHONY: start
 start:
-	sudo apt -y install git screen make vim  build-essential klayout docker.io verilator covered ngspice gtkwave iverilog curl wget
+	sudo apt -y install git screen make vim  build-essential klayout docker.io verilator covered ngspice gtkwave iverilog curl wget gitk
 	sudo usermod -aG docker $(USER)
 
 
@@ -61,6 +62,13 @@ fpga:
 	(cd $(HOME);wget $(URL_FPGA))
 	(cd /opt;xz -dc $(HOME)/fpga-toolchain*.tar.xz | sudo tar -xvf -)
 	echo "export PATH=/opt/fpga-toolchain/bin:$(PATH)" >> $(HOME)/.bashrc
+
+RISC_PATH=$(shell basename $(URL_RISC) .tar.gz)
+
+risc:
+	(cd $(HOME);wget $(URL_RISC))
+	(cd /opt;gzip -dc $(HOME)/riscv64*.tar.gz | sudo tar -xvf -)
+	echo "export PATH=/opt/$(RISC_PATH)/bin:$(PATH)" >> $(HOME)/.bashrc
 
 checker:
 	if ! [ -e "$(CHECKER)" ]; then git clone https://github.com/efabless/open_mpw_precheck $(CHECKER); fi
